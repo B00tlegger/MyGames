@@ -18,13 +18,14 @@ import com.onceuponatime.game.model.weapon.Spear;
 import com.onceuponatime.game.screens.GameScreen;
 import com.onceuponatime.game.utils.Animator;
 import com.onceuponatime.game.utils.AssetsType;
+import com.onceuponatime.game.utils.BodyCreator;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class Hero extends Character {
 
-    Body body;
+    private Body body;
 
     public Hero (GameScreen screen) {
         super(screen);
@@ -34,7 +35,9 @@ public class Hero extends Character {
     @Override
     public void create () {
         type = TypeOfRace.HUMAN;
-        body = createBody();
+        Vector2 respawn = getStartPosition();
+//        body = BodyCreator.createOctagonBody(respawn.x, respawn.y, 18, 8, BodyDef.BodyType.DynamicBody);
+        body = BodyCreator.createOctagonBody(screen.getGame().getWorld(), respawn.x, respawn.y, 18, 8, BodyDef.BodyType.DynamicBody);
         position = body.getPosition();
         weapon = new Spear();
         weapon.setPosition(body.getPosition());
@@ -81,7 +84,7 @@ public class Hero extends Character {
     @Override
     public void toGo (float dt) {
         super.toGo(dt);
-        direction.set(0, 0);
+//        direction.set(0, 0);
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
             if(!canAttack()) {
                 stayPosition = StayPosition.UP;
@@ -154,19 +157,19 @@ public class Hero extends Character {
         }
     }
 
-    private boolean canGo () {
-        TiledMapTileLayer tiledLayer = (TiledMapTileLayer) screen.getMap().getLayers().get("collision");
-        TiledMapTileLayer.Cell cell =
-                tiledLayer.getCell((int) (temp.x / tiledLayer.getTileWidth()),
-                                   (int) (temp.y / tiledLayer.getTileHeight() - 0.5));
-        TiledMapTileLayer.Cell cell2 =
-                tiledLayer.getCell((int) (temp.x / tiledLayer.getTileWidth() - 0.5),
-                                   (int) (temp.y / tiledLayer.getTileHeight() - 0.5));
-        return cell == null && cell2 == null;
-    }
+//    private boolean canGo () {
+//        TiledMapTileLayer tiledLayer = (TiledMapTileLayer) screen.getMap().getLayers().get("collision");
+//        TiledMapTileLayer.Cell cell =
+//                tiledLayer.getCell((int) (temp.x / tiledLayer.getTileWidth()),
+//                                   (int) (temp.y / tiledLayer.getTileHeight() - 0.5));
+//        TiledMapTileLayer.Cell cell2 =
+//                tiledLayer.getCell((int) (temp.x / tiledLayer.getTileWidth() - 0.5),
+//                                   (int) (temp.y / tiledLayer.getTileHeight() - 0.5));
+//        return cell == null && cell2 == null;
+//    }
 
     private Vector2 getStartPosition () {
-        MapObject object = screen.getMap().getLayers().get("spawn").getObjects().get("spawn");
+        MapObject object = screen.getMap().getMapObject("spawn", "spawn");
         float x = object.getProperties().get("x", Float.class);
         float y = object.getProperties().get("y", Float.class);
         return new Vector2(x, y);
